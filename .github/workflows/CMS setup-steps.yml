@@ -1,34 +1,53 @@
-name: " CMS Workflow Setup Steps"
+name: "CMS Workflow Setup Steps"
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - .github/workflows/copilot-setup-steps.yml
+      - .github/workflows/CMS\ setup-steps.yml
+      - tests/cms/**
   pull_request:
     paths:
-      - .github/workflows/copilot-setup-steps.yml
+      - .github/workflows/CMS\ setup-steps.yml
+      - tests/cms/**
+  schedule:
+    - cron: "0 20 * * 0"  # Every Sunday at 8pm UTC
 
 jobs:
-  copilot-setup-steps:
+  cms-setup-and-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [1, 2]
 
     permissions:
       contents: read
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - uses: actions/setup-node@v6
-      with:
-        node-version: lts/*
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-    # Customize this step as needed
-    - name: Build application
-      run: npx run build
+      - name: Create reports directory
+        run: mkdir -p reports
+
+      - name: Run CMS Tests (Shard ${{ matrix.shard }}/2)
+        run: |
+          mkdir -p reports/shard-${{ matrix.shard }}
+          npx playwright test --config=tests/cms/playwright.config.ts --shard=${{ matrix.shard }}/2 --reporter=html
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-shard-${{ matrix.shard }}
+          path: reports/
+          retention-days: 30
