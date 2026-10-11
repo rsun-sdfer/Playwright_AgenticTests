@@ -1,0 +1,20 @@
+{
+  "name": "Automation Sample Product",
+  "categoryName": "Sport shoes",
+  "unit": "Pc",
+  "minQty": 1,
+  "unitPrice": 25.00,
+  "discount": 0,
+  "discountType": "Flat",
+  "currentStock": 10,
+  "tax": 0,
+  "taxType": "Flat",
+  "optional": {
+    "brandName": "",
+    "sku": "AUTOMATION-SAMPLE-SKU",
+    "barcode": "AUTOMATION-SAMPLE-BARCODE",
+    "description": "Reusable baseline product fixture for Admin product form tests.",
+    "metaTitle": "Automation Sample Product",
+    "metaDescription": "Reusable baseline fixture for product form tests."
+  }
+}
