@@ -11,7 +11,7 @@ on:
       - .github/workflows/CMS\ setup-steps.yml
       - tests/cms/**
   schedule:
-    - cron: "0 20 * * 0"  # Every Sunday at 8pm UTC
+    - cron: "0 20 * * 0"
 
 jobs:
   cms-setup-and-tests:
@@ -27,14 +27,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: master
-         
 
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
       - name: Install dependencies
-        run:  npm install
+        run: npm install
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
@@ -43,9 +42,14 @@ jobs:
         run: mkdir -p reports
 
       - name: Run CMS Tests (Shard ${{ matrix.shard }}/2)
+        env:
+          PLAYWRIGHT_HTML_REPORT: reports/shard-${{ matrix.shard }}
         run: |
           mkdir -p reports/shard-${{ matrix.shard }}
-          npx playwright test --config=tests/cms/playwright.config.ts --shard=${{ matrix.shard }}/2 --reporter=html
+          npx playwright test \
+            --config=tests/cms/playwright.config.ts \
+            --shard=${{ matrix.shard }}/2 \
+            --reporter=html
 
       - name: Upload Playwright Report
         if: always()
