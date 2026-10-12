@@ -1,6 +1,6 @@
 # Specs
 
-This directory contains the test plans and browser automation specs for the Playwright-based CMS testing suite.
+This directory contains the test plans and browser automation specs for the Playwright-based CMS testing suite. The tests were created using Playwright's Planner, Generator and Healer agents.
 
 ## What the tests do
 
